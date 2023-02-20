@@ -68,6 +68,7 @@ link_directories(${YDLIDAR_SDK_LIBRARY_DIRS})
 #---------------------------------------------------------------------------------------
 add_executable(${PROJECT_NAME}_node src/scan_ydlidar.cpp)
 add_executable(lidar_driver src/lidar_driver.cpp)
+add_executable(lidar_driver_new src/lidar_driver_new.cpp)
 #---------------------------------------------------------------------------------------
 # add projects that depend on
 #---------------------------------------------------------------------------------------
@@ -81,6 +82,7 @@ target_link_libraries(${PROJECT_NAME}_node
 	${YDLIDAR_SDK_LIBRARIES}
 	)
 target_link_libraries(lidar_driver ${catkin_LIBRARIES})
+target_link_libraries(lidar_driver_new ${catkin_LIBRARIES})
 
 #---------------------------------------------------------------------------------------
 # Install
