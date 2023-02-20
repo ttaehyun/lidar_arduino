@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 #include "sensor_msgs/LaserScan.h"
 #include "sensor_msgs/PointCloud.h"
+#include "lidar_arduino/lidar_scan_angle.h"
 #include "std_srvs/Empty.h"
 #include "src/CYdLidar.h"
 #include "ydlidar_config.h"
@@ -31,7 +32,7 @@ int main(int argc, char **argv) {
     ros::Publisher scan_pub = nh.advertise<sensor_msgs::LaserScan>("scan", 1);
     ros::Publisher pc_pub = nh.advertise<sensor_msgs::PointCloud>("point_cloud",1);
     //내가 만듬
-    
+    ros::Publisher lidar_angle_pub = nh.advertise<lidar_arduino::lidar_scan_angle>("lidar_angle",1);
     ros::NodeHandle nh_private("~");
     std::string str_optvalue = "/dev/ydlidar";
     nh_private.param<std::string>("port", str_optvalue, "/dev/ydlidar");
@@ -140,6 +141,7 @@ int main(int argc, char **argv) {
         if (laser.doProcessSimple(scan)) {
             sensor_msgs::LaserScan scan_msg;
             sensor_msgs::PointCloud pc_msg;
+            lidar_arduino::lidar_scan_angle lidar_scan_angle_msg;
 
             ros::Time start_scan_time;
             start_scan_time.sec = scan.stamp / 1000000000ul;
@@ -186,9 +188,11 @@ int main(int argc, char **argv) {
                     pc_msg.channels[idx_intensity].values.push_back(scan.points[i].intensity);
                     pc_msg.channels[idx_timestamp].values.push_back(i * scan.config.time_increment);
                 }
+              lidar_scan_angle_msg.ranges.push_back(scan.points[i].range);
             }
             scan_pub.publish(scan_msg);
             pc_pub.publish(pc_msg);
+            lidar_angle_pub.publish(lidar_scan_angle_msg);
         } else {
             ROS_ERROR("Failed to get Lidar Data");
         }

@@ -1,5 +1,5 @@
 <launch>
-  <node name="ydlidar_publisher"  pkg="scan_ydlidar"  type="ydlidar_ros_driver_node" output="screen" respawn="false" >
+  <node name="ydlidar_publisher"  pkg="lidar_arduino"  type="lidar_arduino_node" output="screen" respawn="false" >
     <!-- string property -->
     <param name="port"         type="string" value="/dev/ttyLidar"/>  
     <param name="frame_id"     type="string" value="laser_frame"/>
