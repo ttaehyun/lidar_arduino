@@ -17,15 +17,27 @@ public:
     //섭스크라이브 할 토픽 선언
     sub_ = n_.subscribe("/scan", 1, &LidarScan::scan_callback, this);
   }
-
+  
   void scan_callback(const sensor_msgs::LaserScan& lidar_angle)
   {
+    
     lidar_arduino::control control_msg;
-    // 여기서 너가 원하는대로 값을 만지세요
-
-    control_msg.direction = 10;
-
-    // ...
+    control_msg.direction = 60;
+    //control_msg.number = 0;
+    //10도 20도 라이다 값
+    for (int i = 14; i<=28; i++) {
+      ROS_INFO("Range[%d] = %.10f",i,lidar_angle.ranges[i]);
+      if (lidar_angle.ranges[i] <=0.2) {
+        control_msg.direction = 10;
+      }
+    }
+    //340도 350도 라이다 값
+    for (int i = 476; i<=490; i++) {
+      ROS_INFO("Range[%d] = %.10f",i,lidar_angle.ranges[i]);
+      if (lidar_angle.ranges[i] <=0.2) {
+        control_msg.direction = 110;
+      }
+    }
     pub_.publish(control_msg);
   }
 
