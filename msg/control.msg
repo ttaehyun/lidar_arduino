@@ -1,2 +1,1 @@
 int64 direction
-int64 number

@@ -20,9 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
 ##################LaserFan ##########################
 add_message_files(DIRECTORY msg
   FILES
-  ardu_scan.msg
   control.msg
-  lidar_scan_angle.msg
+  angle_ranges.msg
 )
 
 generate_messages(DEPENDENCIES
@@ -67,8 +66,7 @@ link_directories(${YDLIDAR_SDK_LIBRARY_DIRS})
 # generate excutable and add libraries
 #---------------------------------------------------------------------------------------
 add_executable(${PROJECT_NAME}_node src/scan_ydlidar.cpp)
-add_executable(lidar_driver src/lidar_driver.cpp)
-add_executable(lidar_driver_new src/lidar_driver_new.cpp)
+add_executable(lidar_control_calc src/lidar_control_calc.cpp)
 #---------------------------------------------------------------------------------------
 # add projects that depend on
 #---------------------------------------------------------------------------------------
@@ -81,8 +79,8 @@ target_link_libraries(${PROJECT_NAME}_node
 	${catkin_LIBRARIES}
 	${YDLIDAR_SDK_LIBRARIES}
 	)
-target_link_libraries(lidar_driver ${catkin_LIBRARIES})
-target_link_libraries(lidar_driver_new ${catkin_LIBRARIES})
+
+target_link_libraries(lidar_control_calc ${catkin_LIBRARIES})
 
 #---------------------------------------------------------------------------------------
 # Install
