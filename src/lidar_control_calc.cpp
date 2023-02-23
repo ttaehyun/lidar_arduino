@@ -1,21 +1,21 @@
 #include <ros/ros.h>
 #include "sensor_msgs/LaserScan.h"
 #include "lidar_arduino/control.h"
-
+#include "std_msgs/Int64.h"
 class LidarScan
 {
 public:
   LidarScan()
   {
     //퍼블리쉬 할 토픽 선언
-    pub_ = n_.advertise<lidar_arduino::control>("/ardu_topic", 10);
+    pub_ = n_.advertise<std_msgs::Int64>("ardu_topic", 1);
 
     //섭스크라이브 할 토픽 선언
     sub_ = n_.subscribe("/scan", 1, &LidarScan::scan_callback, this);
   }
-  lidar_arduino::control except_zero_calc(int angle_start, int angle_finish, const sensor_msgs::LaserScan& lidar_angle) {
-    lidar_arduino::control control_msg;
-    control_msg.direction = 60;
+  std_msgs::Int64 except_zero_calc(int angle_start, int angle_finish, const sensor_msgs::LaserScan& lidar_angle) {
+    std_msgs::Int64 control_msg;
+    control_msg.data = 60;
     //1. 임시배열 생성 및 저장
     _Float32 tmp_ranges[15];
     int index_num[] = {};
@@ -39,13 +39,13 @@ public:
         if (index_num[i] != 22) {
           if (tmp_ranges[i] <=0.2) {
             if (angle_start>252) {
-              control_msg.direction =110;
+              control_msg.data =110;
             }
             else if (angle_start<=252) {
-              control_msg.direction = 10;
+              control_msg.data = 10;
             }
           }
-          else control_msg.direction = 60;
+          else control_msg.data = 60;
         }
       }
     }
@@ -53,13 +53,13 @@ public:
       for (int i = 0; i<15; i++) {
         if (tmp_ranges[i] <=0.2) {
           if (angle_start>252) {
-              control_msg.direction =110;
+              control_msg.data =110;
             }
             else if (angle_start<=252) {
-              control_msg.direction = 10;
+              control_msg.data = 10;
             }
         }
-        else control_msg.direction = 60;
+        else control_msg.data = 60;
       }
     }
     ROS_INFO("zero_count(%d) [%lf]",angle_start, zero_count);
@@ -69,13 +69,13 @@ public:
   void scan_callback(const sensor_msgs::LaserScan& lidar_angle)
   {
     
-    lidar_arduino::control control_msg;
-    control_msg.direction = 60;
+    std_msgs::Int64 control_msg;
+    control_msg.data = 60;
 
-    if (control_msg.direction == 60) {
+    if (control_msg.data == 60) {
       control_msg = except_zero_calc(14,28,lidar_angle);
     }
-    if (control_msg.direction == 60) {
+    if (control_msg.data == 60) {
       control_msg = except_zero_calc(476, 490, lidar_angle);
     }
     pub_.publish(control_msg);

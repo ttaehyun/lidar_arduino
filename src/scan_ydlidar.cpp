@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     ros::Publisher scan_pub = nh.advertise<sensor_msgs::LaserScan>("scan", 1);
     ros::Publisher pc_pub = nh.advertise<sensor_msgs::PointCloud>("point_cloud",1);
 
-    ros::Publisher angle_pub = nh.advertise<lidar_arduino::angle_ranges>("angle_ranges",1);
+    //ros::Publisher angle_pub = nh.advertise<lidar_arduino::angle_ranges>("angle_ranges",1);
 
     ros::NodeHandle nh_private("~");
     std::string str_optvalue = "/dev/ydlidar";
@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
             sensor_msgs::LaserScan scan_msg;
             sensor_msgs::PointCloud pc_msg;
 
-            lidar_arduino::angle_ranges angle_msg;
+            //lidar_arduino::angle_ranges angle_msg;
 
             ros::Time start_scan_time;
             start_scan_time.sec = scan.stamp / 1000000000ul;
@@ -190,11 +190,11 @@ int main(int argc, char **argv) {
                     pc_msg.channels[idx_intensity].values.push_back(scan.points[i].intensity);
                     pc_msg.channels[idx_timestamp].values.push_back(i * scan.config.time_increment);
                 }
-              angle_msg.ranges.push_back(scan.points[i].range);
+              //angle_msg.ranges.push_back(scan.points[i].range);
             }
             scan_pub.publish(scan_msg);
             pc_pub.publish(pc_msg);
-            angle_pub.publish(angle_msg);
+            //angle_pub.publish(angle_msg);
         } else {
             ROS_ERROR("Failed to get Lidar Data");
         }
