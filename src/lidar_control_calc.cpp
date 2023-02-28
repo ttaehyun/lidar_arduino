@@ -8,7 +8,7 @@ public:
   LidarScan()
   {
     //퍼블리쉬 할 토픽 선언
-    pub_ = n_.advertise<std_msgs::Int64>("ardu_topic", 1);
+    pub_ = n_.advertise<lidar_arduino::control>("ardu_topic", 1);
     //섭스크라이브 할 토픽 선언
     sub_ = n_.subscribe("/scan", 1, &LidarScan::scan_callback, this);
   }
@@ -33,6 +33,8 @@ public:
     }
     //3. 판별된 횟수가 특정 비율보다 작으면 센서값이 튀었다는 뜻, 그 반대는 정상적인 센서값이다
     float rate_result = zero_count / all_count;
+    ROS_INFO("zero_count(%d) [%lf]",angle_start, zero_count);
+    ROS_INFO("rate_rusult(%d) [%lf]",angle_start, rate_result);
     if (rate_result <0.5) {   //센서값 튀었다 
       for (int i = 0; i< 15; i++) {
         if (index_num[i] != 22) {
@@ -51,15 +53,13 @@ public:
         else return false;
       }
     }
-    ROS_INFO("zero_count(%d) [%lf]",angle_start, zero_count);
-    ROS_INFO("rate_rusult(%d) [%lf]",angle_start, rate_result);
   }
   void scan_callback(const sensor_msgs::LaserScan& lidar_angle)
   {
     
     lidar_arduino::control control_msg;
     control_msg.direction = 60;
-    control_msg.esc_motor = 22;
+    control_msg.esc_motor = 24;
     bool Left = except_zero_bool(476,490,lidar_angle);
     bool Right = except_zero_bool(14,28,lidar_angle);
     if (Left && Right){
