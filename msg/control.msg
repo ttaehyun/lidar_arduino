@@ -1,1 +1,2 @@
 int64 direction
+int64 esc_motor
