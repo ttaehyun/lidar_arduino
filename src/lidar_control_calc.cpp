@@ -15,30 +15,31 @@ public:
 
   bool except_zero_bool(int angle_start, int angle_finish, const sensor_msgs::LaserScan& lidar_angle) {
     //1. 임시배열 생성 및 저장
-    _Float32 tmp_ranges[15];
+    int tmp_index = angle_finish - angle_start + 1;
+    _Float32 tmp_ranges[tmp_index];
     int index_num[] = {};
     float zero_count = 0.0;
-    int all_count = 15;
+    //int all_count = tmp_index;
     
     for (int i = angle_start; i <= angle_finish; i++) {
       tmp_ranges[i-angle_start] = lidar_angle.ranges[i];
     }
     //2. 0.1 보다 작은지 판별후 0.1 판별된 횟수 저장
-    for (int i = 0; i<15; i++) {
+    for (int i = 0; i<tmp_index; i++) {
       if (tmp_ranges[i] <0.1) {
         zero_count++;
         index_num[i] = i;
       }
-      else index_num[i] = 22; //0.1 보다 작은 값이 도출된 인덱스 번호를 저장
+      else index_num[i] = tmp_index + 10; //0.1 보다 작은 값이 도출된 인덱스 번호를 저장
     }
     //3. 판별된 횟수가 특정 비율보다 작으면 센서값이 튀었다는 뜻, 그 반대는 정상적인 센서값이다
-    float rate_result = zero_count / all_count;
+    float rate_result = zero_count / tmp_index; // tmp_index -> 전체 도출된 값의 개수
     ROS_INFO("zero_count(%d) [%lf]",angle_start, zero_count);
     ROS_INFO("rate_rusult(%d) [%lf]",angle_start, rate_result);
     if (rate_result <0.5) {   //센서값 튀었다 
-      for (int i = 0; i< 15; i++) {
+      for (int i = 0; i< tmp_index; i++) {
         if (index_num[i] != 22) {
-          if (tmp_ranges[i] <=0.2) {  //
+          if (tmp_ranges[i] <=0.2) {  //angle_start -> angle_finish 각의 거리 측정값 0.2작은지
             return true;
           }
           else return false;
@@ -46,8 +47,8 @@ public:
       }
     }
     else {        //센서값 튀지 않았따
-      for (int i = 0; i<15; i++) {
-        if (tmp_ranges[i] <=0.2) {
+      for (int i = 0; i<tmp_index; i++) {
+        if (tmp_ranges[i] <=0.2) {  //angle_start -> angle_finish 각의 거리 측정값 0.2작은지
           return true;
         }
         else return false;
@@ -59,7 +60,7 @@ public:
     
     lidar_arduino::control control_msg;
     control_msg.direction = 60;
-    control_msg.esc_motor = 24;
+    control_msg.esc_motor = 30;
     bool Left = except_zero_bool(476,490,lidar_angle);
     bool Right = except_zero_bool(14,28,lidar_angle);
     if (Left && Right){
