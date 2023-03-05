@@ -55,12 +55,13 @@ public:
       }
     }
   }
+
   void scan_callback(const sensor_msgs::LaserScan& lidar_angle)
   {
     
     lidar_arduino::control control_msg;
     control_msg.direction = 60;
-    control_msg.esc_motor = 30;
+    control_msg.esc_motor = 25;
     bool Left = except_zero_bool(454,473,lidar_angle);
     bool Right = except_zero_bool(31,50,lidar_angle);
     if (Left && Right){
