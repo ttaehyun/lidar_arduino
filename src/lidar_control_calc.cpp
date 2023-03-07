@@ -61,18 +61,20 @@ public:
     
     lidar_arduino::control control_msg;
     control_msg.direction = 60;
-    control_msg.esc_motor = 21;
-    bool Left = except_zero_bool(454,473,lidar_angle);
-    bool Right = except_zero_bool(31,50,lidar_angle);
-    if (Left && Right){
+    control_msg.esc_motor = 23;
+    bool Left_front = except_zero_bool(454,473,lidar_angle); //325도 338도
+    bool Right_front = except_zero_bool(31,50,lidar_angle);
+    if (Left_front && Right_front){
       control_msg.direction = 60;
       control_msg.esc_motor = 19;
     }
-    else if(Left) {
+    else if(Left_front) {
       control_msg.direction = 110;
+      control_msg.esc_motor = 21;
     }
-    else if(Right) {
+    else if(Right_front) {
       control_msg.direction = 10;
+      control_msg.esc_motor = 21;
     }
     
     pub_.publish(control_msg);
